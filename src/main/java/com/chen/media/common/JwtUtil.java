@@ -2,7 +2,9 @@ package com.chen.media.common;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -11,7 +13,7 @@ import java.util.Date;
 public class JwtUtil {
 
     // 密钥（用于签名和验证）
-    private static final SecretKey secretKey = Keys.hmacShaKeyFor("sajdsadiasdias".getBytes());
+    private static final SecretKey secretKey = Keys.hmacShaKeyFor("sajdsadiadasdsadsadsadasdassdias".getBytes());
 
     // 过期时间（单位：毫秒，例如 1 小时）
     private static final long EXPIRATION_TIME = 3600000;
@@ -43,8 +45,10 @@ public class JwtUtil {
             return claimsJws.getBody();
         } catch (ExpiredJwtException e) {
 //            throw new LeaseException(ResultCodeEnum.TOKEN_EXPIRED);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         } catch (JwtException e) {
 //            throw new LeaseException(ResultCodeEnum.TOKEN_INVALID);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
 
