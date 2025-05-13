@@ -45,7 +45,7 @@ public class Result<T> {
     }
 
     public static <T> Result<T> fail() {
-        return build(null, ResultCodeEnum.FAIL);
+        return build(null, ResultCodeEnum.FAILED);
     }
 
     public static <T> Result<T> fail(Integer code, String message) {

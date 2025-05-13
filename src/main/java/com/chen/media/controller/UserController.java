@@ -5,9 +5,7 @@ import com.chen.media.pojo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,9 +18,13 @@ public class UserController {
     private UserMapper userMapper;
 
     @GetMapping("queryUsers")
-    public String queryUser () {
+    public String queryUser (@RequestParam("name") String name, @RequestParam("age") Integer age) {
 //        List<User> userList = userMapper.selectList(null);
-        log.info("queryUsers");
         return "success" ;
+    }
+
+    @PostMapping("addUser")
+    public String addUser () {
+        return "add";
     }
 }

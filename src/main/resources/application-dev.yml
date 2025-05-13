@@ -1,0 +1,26 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://122.51.230.162:3306/lease
+    username: root
+    password: c2011020@
+  data:
+    redis:
+      database: 0
+      port: 6379
+      host: 122.51.230.162
+      password: c2011020@
+      timeout: 10000
+
+minio:
+  endpoint: http://122.51.230.162:9000
+  accessKey: vYAZWdmlVrfv3sw6S1Ex
+  secretKey: siZkAxjBQyW9fun56aYSh4tFwW3vCwemlclulHJV
+  bucketName: test
+
+logging:
+  config: classpath:logback/logback-dev.xml
+  level:
+    root: info
