@@ -1,13 +1,14 @@
 package com.chen.media.controller;
 
+import com.chen.media.dto.VerifyCaptchaDto;
 import com.chen.media.result.Result;
+import com.chen.media.service.CaptchaService;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -33,24 +34,17 @@ public class CaptchaController {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private CaptchaService captchaService;
+
     /**
      * 生成验证码
      */
     @PostMapping("/generate")
     public Result<Map<String, Object>> generateCaptcha(){
         try {
-            String captchaText  = captchaProducer.createText();
-            String captchaId = UUID.randomUUID().toString();
-            BufferedImage captchaImage = captchaProducer.createImage(captchaText);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ImageIO.write(captchaImage, "jpg", byteArrayOutputStream);
-            String base64Image = "data:image/jpeg;base64," + java.util.Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
-            log.info("生成验证码uuid: {}, 验证码内容: {}", captchaId, base64Image);
-            Map<String, Object> map = new HashMap<>();
-            map.put("uuid", captchaId);
-            map.put("image", base64Image);
-            redisTemplate.opsForValue().set(captchaId, captchaText, 60 * 1);
-            return Result.ok(map);
+            Map<String, Object> captcha = captchaService.getCaptcha();
+            return Result.ok(captcha);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("生成验证码失败: {}", e.getMessage());

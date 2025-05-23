@@ -84,7 +84,7 @@ public class User implements Serializable {
     /**
      * 邮箱
      */
-    private String 邮箱;
+    private String email;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

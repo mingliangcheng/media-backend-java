@@ -34,6 +34,8 @@ public class CaptchaConfig {
         properties.setProperty("kaptcha.textproducer.font.size", "40");
         // KAPTCHA_SESSION_KEY
         properties.setProperty("kaptcha.session.key", "kaptchaCodeMath");
+        properties.setProperty("kaptcha.textproducer.case.sensitive", "false");
+        properties.setProperty("kaptcha.textproducer.char.string", "0123456789abcdefghjkmnpqrstuvwxyABCDEFGHJKLMNPQRSTUVWXYZ");
         // 验证码文本生成器
 //        properties.setProperty("kaptcha.textproducer.impl", "com.yolo.springboot.kaptcha.config.KaptchaTextCreator");
         // 验证码文本字符间距 默认为2
