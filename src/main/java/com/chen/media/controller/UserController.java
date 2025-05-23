@@ -17,7 +17,7 @@ public class UserController {
     @Autowired
     private UserMapper userMapper;
 
-    @GetMapping("queryUsers")
+    @GetMapping("register")
     public String queryUser (@RequestParam("name") String name, @RequestParam("age") Integer age) {
 //        List<User> userList = userMapper.selectList(null);
         return "success" ;
