@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.chen.media.service.CaptchaService;
+import com.chen.media.service.UserClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ class MediaApplicationTests {
     @Autowired
     private CaptchaService captchaService;
 
+    @Autowired
+    private UserClient userClient;
+
     @Test
     void testRedis() throws IOException {
         Map<String, Object> captcha = captchaService.getCaptcha();
@@ -34,6 +38,12 @@ class MediaApplicationTests {
     void getRedisValue() throws IOException {
         boolean b = captchaService.verifyCaptcha("dhuD", "2df31cc7-d3c0-4005-98ce-2a08fd09ffab");
         log.info("b:{}", b);
+    }
+
+    @Test
+    void testFeign() {
+        String phoneNumber = userClient.getPhoneNumber("1234556");
+        log.info("phoneNumber:{}", phoneNumber);
     }
 
 }

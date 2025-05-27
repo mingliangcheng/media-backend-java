@@ -3,6 +3,7 @@ package com.chen.media.exception;
 import com.chen.media.result.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,6 +23,13 @@ public class GlobalExceptionHandler {
 //        response.put("message", "参数错误");
 //        response.put("data", null);
 //        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return Result.fail(400, "参数错误");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        e.printStackTrace();
         return Result.fail(400, "参数错误");
     }
 

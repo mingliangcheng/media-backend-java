@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,15 +32,12 @@ public class LogAspect {
             });
         } else if ("POST".equalsIgnoreCase(request.getMethod())) {
             if (request.getContentType() != null && request.getContentType().contains("application/json")) {
-                // JSON 请求体
-                ObjectMapper objectMapper = new ObjectMapper();
-                Map<String, Object> body = objectMapper.readValue(request.getInputStream(), Map.class);
-
-                String parameters = body.entrySet().stream()
-                        .map(entry -> entry.getKey() + " = " + entry.getValue())
-                        .collect(Collectors.joining(", "));
-
-                log.info("JSON Body Parameters: {}", parameters);
+                ContentCachingRequestWrapper cachingRequest = new ContentCachingRequestWrapper(request);
+                byte[] buf = cachingRequest.getContentAsByteArray();
+                if (buf.length > 0) {
+                    String requestBody = new String(buf, 0, buf.length, cachingRequest.getCharacterEncoding());
+                    log.info("JSON Body Parameters: {}", requestBody);
+                }
             } else {
                 // 表单参数
                 Map<String, String[]> parameterMap = request.getParameterMap();
