@@ -2,6 +2,7 @@ package com.chen.media.controller;
 
 import com.chen.media.result.Result;
 import com.chen.media.service.impl.MinioService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,8 +15,12 @@ public class FileController {
     private MinioService minioService;
 
     @PostMapping("/upload")
-    public Result<String> upload(@RequestParam("file") MultipartFile file) throws Exception {
-        String url =  minioService.upload(file);
+    public Result<String> upload(@RequestParam("file") MultipartFile file, @RequestParam("folder") String folder) throws Exception {
+        boolean notBlank = StringUtils.isNotBlank(folder);
+        if (!notBlank) {
+            return Result.fail(500, "folder不能为空");
+        }
+        String url =  minioService.upload(folder, file);
         return Result.ok(url);
     }
 }

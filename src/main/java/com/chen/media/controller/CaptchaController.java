@@ -41,10 +41,9 @@ public class CaptchaController {
      * 生成验证码
      */
     @PostMapping("/generate")
-    public Result<Map<String, Object>> generateCaptcha(){
+    public Result generateCaptcha() {
         try {
-            Map<String, Object> captcha = captchaService.getCaptcha();
-            return Result.ok(captcha);
+            return captchaService.getCaptcha();
         } catch (Exception e) {
             e.printStackTrace();
             log.error("生成验证码失败: {}", e.getMessage());

@@ -13,6 +13,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authInterceptor).excludePathPatterns("/login");
+        registry.addInterceptor(authInterceptor).excludePathPatterns("/user/loginByPassword", "/user/univerify", "/user/register", "/captcha/**");
     }
 }

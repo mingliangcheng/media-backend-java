@@ -1,5 +1,6 @@
 package com.chen.media.service.impl;
 
+import com.chen.media.result.Result;
 import com.chen.media.service.CaptchaService;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     private RedisTemplate redisTemplate;
 
     @Override
-    public Map<String, Object> getCaptcha() throws IOException {
+    public Result getCaptcha() throws IOException {
         String captchaText  = captchaProducer.createText();
         String captchaId = UUID.randomUUID().toString();
         BufferedImage captchaImage = captchaProducer.createImage(captchaText);
@@ -44,7 +45,7 @@ public class CaptchaServiceImpl implements CaptchaService {
         map.put("captchaId", captchaId);
         map.put("image", base64Image);
         redisTemplate.opsForValue().set(captchaId, captchaText, 60 * 5, TimeUnit.SECONDS);
-        return map;
+        return Result.ok(map);
     }
 
     @Override

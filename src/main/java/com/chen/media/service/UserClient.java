@@ -22,7 +22,7 @@ public interface UserClient {
 
     /**
      * 调用云函数，获取手机号
-     * @param UniverifyLoginDto
+     * @param univerifyLoginDto
      * @return
      *   // {
      *   //   code: 0,

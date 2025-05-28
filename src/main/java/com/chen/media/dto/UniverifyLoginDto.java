@@ -1,7 +1,10 @@
 package com.chen.media.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * @className: UniverifyLoginDto
@@ -10,11 +13,11 @@ import lombok.Data;
  * @date: 2025/5/27 14:14
  */
 @Data
-public class UniverifyLoginDto {
-    @NotEmpty(message = "openid不能为空")
+public class UniverifyLoginDto implements Serializable {
+    @NotBlank(message = "openid不能为空")
     String openid;
 
-    @NotEmpty(message = "accessToken不能为空")
+    @NotBlank(message = "accessToken不能为空")
     String accessToken;
 
     String sign;

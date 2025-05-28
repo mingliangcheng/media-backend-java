@@ -24,3 +24,6 @@ logging:
   config: classpath:logback/logback-prod.xml
   level:
     root: info
+
+univerify:
+  secret: cml&cxuniverify125a#

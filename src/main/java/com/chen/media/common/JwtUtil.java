@@ -31,7 +31,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static Claims parseToken(String token) {
+    public Claims parseToken(String token) {
 
         if (token == null) {
 //            throw new LeaseException(ResultCodeEnum.ADMIN_LOGIN_AUTH);

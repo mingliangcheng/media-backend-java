@@ -23,7 +23,7 @@ public class MinioService {
     /**
      * 上传文件到MinIO
      */
-    public String upload(MultipartFile file) throws Exception {
+    public String upload(String folder,MultipartFile file) throws Exception {
 
         // 设置存储桶为公共读取
         String policy = "{\n" +
@@ -51,7 +51,7 @@ public class MinioService {
         }
 
         // 生成唯一的文件名
-        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        String fileName = folder + "/" + UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         // 获取文件输入流
         InputStream inputStream = file.getInputStream();
         // 上传文件

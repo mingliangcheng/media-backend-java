@@ -1,5 +1,7 @@
 package com.chen.media.controller;
 
+import com.chen.media.dto.LoginDto;
+import com.chen.media.dto.RegisterDto;
 import com.chen.media.dto.UniverifyLoginDto;
 import com.chen.media.dto.VerifyCaptchaDto;
 import com.chen.media.mapper.UserMapper;
@@ -26,23 +28,33 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("register")
-    public String queryUser (@RequestParam("name") String name, @RequestParam("age") Integer age) {
-//        List<User> userList = userMapper.selectList(null);
-        return "success" ;
-    }
-
-    @PostMapping("addUser")
-    public String addUser (@RequestBody VerifyCaptchaDto verifyCaptchaDto) {
-        return "add";
+    /**
+     * @description 一键登录
+     */
+    @PostMapping("univerify")
+    public Result univerifyLogin(@Valid @RequestBody UniverifyLoginDto univerifyLoginDto) throws Exception {
+        log.info("请求参数：{}", univerifyLoginDto.toString());
+        return userService.univerifyLogin(univerifyLoginDto);
     }
 
     /**
-     * 一键登录
+     * @description 手机号密码登录
      */
-    @PostMapping("univerify")
-    public Result<Map<String, Object>> univerifyLogin (@Valid @RequestBody UniverifyLoginDto univerifyLoginDto) throws Exception {
-        Map<String, Object> loginResult = userService.univerifyLogin(univerifyLoginDto);
-        return Result.ok(loginResult);
+    @PostMapping("loginByPassword")
+    public Result loginByPassword(@Valid @RequestBody LoginDto loginDto) throws Exception {
+        log.info("请求参数：{}", loginDto.toString());
+        return userService.loginByPassword(loginDto);
+    }
+
+    /**
+     * @description 账号注册
+     */
+    @PostMapping("register")
+        public Result register(@Valid @RequestBody RegisterDto registerDto) throws Exception {
+        log.info("请求参数：{}", registerDto.toString());
+        if (!registerDto.getPassword().equals(registerDto.getConfirmPassword())) {
+            Result.fail(500,"两次密码输入不一致");
+        }
+        return userService.register(registerDto);
     }
 }
