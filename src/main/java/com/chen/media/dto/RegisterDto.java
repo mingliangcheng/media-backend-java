@@ -21,11 +21,11 @@ public class RegisterDto implements Serializable {
     private String phone;
 
     @NotBlank(message = "密码不能为空")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*_\\-+=`|\\\\(){}[\\]:;\"'<>,.?/])[0-9a-zA-Z~!@#$%^&*_\\-+=`|\\\\(){}[\\]:;\"'<>,.?/]{8,16}$", message = "密码必须包含大小写字母、数字和特殊符号，密码长度必须在8-16位之间")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\\\\-_=+{};:,<.>]).{8,16}$", message = "密码必须包含大小写字母、数字和特殊符号，密码长度必须在8-16位之间")
     private String password;
 
     @NotBlank(message = "昵称不能为空")
-    @Size(min = 4, max = 50)
+    @Size(min = 2, max = 50, message = "昵称长度必须在2-50之间")
     private String nickname;
 
     @NotBlank(message = "确认密码不能为空")

@@ -6,6 +6,8 @@ import com.chen.media.dto.UniverifyLoginDto;
 import com.chen.media.pojo.User;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,6 +85,15 @@ class MediaApplicationTests {
     void parseJwt() {
         Claims claims = jwtUtil.parseToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMT0dJTl9VU0VSIiwiZXhwIjoxNzc5OTQ5MTEzLCJ1c2VySWQiOjEsInVzZXJuYW1lIjoiMTU3OTM2OTE4NDUifQ.T_u80rdpHwf2uIFUaZsq7eGxP1-J_K0IGhSPOpw6Gx8");
         log.info("claims:{}", claims.get("username"));
+    }
+
+    @Test
+    void testTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String format = localDateTime.format(formatter);
+        log.info("format:{}", format);
+        log.info("当前时间{}", LocalDateTime.now());
     }
 
 }

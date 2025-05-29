@@ -50,11 +50,8 @@ public class UserController {
      * @description 账号注册
      */
     @PostMapping("register")
-        public Result register(@Valid @RequestBody RegisterDto registerDto) throws Exception {
+    public Result register(@Valid @RequestBody RegisterDto registerDto) throws Exception {
         log.info("请求参数：{}", registerDto.toString());
-        if (!registerDto.getPassword().equals(registerDto.getConfirmPassword())) {
-            Result.fail(500,"两次密码输入不一致");
-        }
         return userService.register(registerDto);
     }
 }

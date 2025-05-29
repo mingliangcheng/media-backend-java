@@ -3,6 +3,7 @@ package com.chen.media.exception;
 import com.chen.media.result.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +34,13 @@ public class GlobalExceptionHandler {
         return Result.fail(400, "参数错误");
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        e.printStackTrace();
+        return Result.fail(400, "参数错误");
+    }
+
 
     // 处理404 Not Found
     @ExceptionHandler(NoResourceFoundException.class)
@@ -41,7 +49,6 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         return Result.fail(404, "资源不存在");
     }
-
 
 
     @ExceptionHandler(Exception.class)

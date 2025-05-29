@@ -1,11 +1,11 @@
 package com.chen.media.service.impl;
 
+import com.chen.media.common.RedisUtil;
 import com.chen.media.result.Result;
 import com.chen.media.service.CaptchaService;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -30,11 +30,11 @@ public class CaptchaServiceImpl implements CaptchaService {
     private DefaultKaptcha captchaProducer;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisUtil redisUtil;
 
     @Override
     public Result getCaptcha() throws IOException {
-        String captchaText  = captchaProducer.createText();
+        String captchaText = captchaProducer.createText();
         String captchaId = UUID.randomUUID().toString();
         BufferedImage captchaImage = captchaProducer.createImage(captchaText);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -44,17 +44,17 @@ public class CaptchaServiceImpl implements CaptchaService {
         Map<String, Object> map = new HashMap<>();
         map.put("captchaId", captchaId);
         map.put("image", base64Image);
-        redisTemplate.opsForValue().set(captchaId, captchaText, 60 * 5, TimeUnit.SECONDS);
+        redisUtil.setValue(captchaId, captchaText, 60 * 5, TimeUnit.SECONDS);
         return Result.ok(map);
     }
 
     @Override
     public boolean verifyCaptcha(String code, String captchaId) {
-        Object captchaId1 = redisTemplate.opsForValue().get(captchaId);
+        Object captchaId1 = redisUtil.getValue(captchaId);
         if (captchaId1 == null) {
             return false;
         }
-        String captchaText = redisTemplate.opsForValue().get(captchaId).toString();
+        String captchaText = redisUtil.getValue(captchaId).toString();
         return captchaText.equalsIgnoreCase(code);
     }
 }

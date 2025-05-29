@@ -4,6 +4,7 @@ import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.media.common.JwtUtil;
+import com.chen.media.common.RedisUtil;
 import com.chen.media.common.ShaSignatureUtil;
 import com.chen.media.dto.LoginDto;
 import com.chen.media.dto.RegisterDto;
@@ -15,10 +16,8 @@ import com.chen.media.service.UserClient;
 import com.chen.media.service.UserService;
 import com.chen.media.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -51,7 +50,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private CaptchaService captchaService;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisUtil redisUtil;
 
     @Override
     public Result univerifyLogin(UniverifyLoginDto univerifyLoginDto) throws Exception {
@@ -108,45 +107,47 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public Result loginByPassword(LoginDto loginDto) throws IOException {
-        // 1.校验验证码是否正确
-        boolean verifyCaptcha = captchaService.verifyCaptcha(loginDto.getCaptchaCode(), loginDto.getCaptchaId());
-        if (!verifyCaptcha) {
-            redisTemplate.delete(loginDto.getCaptchaId());
-            return Result.fail(500, "验证码错误");
-        }
         // 2.校验手机号是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
         queryWrapper.eq("phone", loginDto.getPhone());
         User user = userMapper.selectOne(queryWrapper);
         if (user == null) {
-            redisTemplate.delete(loginDto.getCaptchaId());
+            redisUtil.deleteKey(loginDto.getCaptchaId());
             return Result.fail(500, "手机号不存在");
         }
         // 3.校验密码是否正确
         if (!user.getPassword().equals(DigestUtil.md5Hex(loginDto.getPassword()))) {
-            redisTemplate.delete(loginDto.getCaptchaId());
+            redisUtil.deleteKey(loginDto.getCaptchaId());
             return Result.fail(500, "账号或密码错误");
         }
         // 4.生成token并存入redis
         String token = jwtUtil.generateToken(user.getId(), user.getPhone());
-        redisTemplate.opsForValue().set("user:" + user.getPhone(), token, 365, TimeUnit.DAYS);
-        redisTemplate.delete(loginDto.getCaptchaId());
+        redisUtil.setValue("user:" + user.getPhone(), token, 365L, TimeUnit.DAYS);
+        redisUtil.deleteKey(loginDto.getCaptchaId());
         // 5.返回token
         return Result.ok(token);
     }
 
     @Override
     public Result register(RegisterDto registerDto) throws IOException {
+        // 0校验密码一致
+        if (!registerDto.getPassword().equals(registerDto.getConfirmPassword())) {
+            redisUtil.deleteKey(registerDto.getCaptchaId());
+            return Result.fail(500, "两次密码不一致");
+        }
         // 1.校验验证码是否正确
         boolean verifyCaptcha = captchaService.verifyCaptcha(registerDto.getCaptchaCode(), registerDto.getCaptchaId());
         if (!verifyCaptcha) {
+            redisUtil.deleteKey(registerDto.getCaptchaId());
             return Result.fail(500, "验证码错误");
         }
+
         // 2.校验手机号是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
         queryWrapper.eq("phone", registerDto.getPhone());
         User user = userMapper.selectOne(queryWrapper);
         if (user != null) {
+            redisUtil.deleteKey(registerDto.getCaptchaId());
             return Result.fail(500, "手机号已存在");
         }
         // 3.插入数据库
@@ -155,9 +156,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user1.setPassword(DigestUtil.md5Hex(registerDto.getPassword()));
         user1.setNickname(registerDto.getNickname());
         userMapper.insert(user1);
+        redisUtil.deleteKey(registerDto.getCaptchaId());
         // 4.返回成功
-        return Result.ok("注册成功");
+        return Result.ok(null);
     }
+
 }
 
 
