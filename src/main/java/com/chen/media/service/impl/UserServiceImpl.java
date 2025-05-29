@@ -15,6 +15,7 @@ import com.chen.media.service.CaptchaService;
 import com.chen.media.service.UserClient;
 import com.chen.media.service.UserService;
 import com.chen.media.mapper.UserMapper;
+import com.chen.media.vo.LoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -124,8 +125,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String token = jwtUtil.generateToken(user.getId(), user.getPhone());
         redisUtil.setValue("user:" + user.getPhone(), token, 365L, TimeUnit.DAYS);
         redisUtil.deleteKey(loginDto.getCaptchaId());
+        LoginVo loginVo = new LoginVo();
+        loginVo.setToken(token);
+        loginVo.setAvatarUrl(user.getAvatarUrl());
+        loginVo.setGender(user.getGender());
+        loginVo.setNickname(user.getNickname());
+        loginVo.setSignature(user.getSignature());
+        loginVo.setBirthday(user.getBirthday());
+        loginVo.setId(user.getId());
+        loginVo.setPhone(user.getPhone());
         // 5.返回token
-        return Result.ok(token);
+        return Result.ok(loginVo);
     }
 
     @Override

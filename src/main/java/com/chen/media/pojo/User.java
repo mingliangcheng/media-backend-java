@@ -88,7 +88,7 @@ public class User implements Serializable {
     /**
      * 出生日期
      */
-    private Date birthday;
+    private LocalDateTime birthday;
 
     /**
      * 邮箱
